@@ -3,14 +3,27 @@ import { MovieContext } from '../context'
 import { getImgUrl } from '../utils/cine-utility';
 import deleteImg from '../assets/delete.svg'
 import checkout from '../assets/icons/checkout.svg';
+import { toast } from 'react-toastify';
 
 export default function CartDetails({ onClose }) {
-    const { cartData, setCartData } = useContext(MovieContext);
+    // const { cartData, setCartData } = useContext(MovieContext);
+    const { state, dispatch } = useContext(MovieContext);
 
-    function handleCartDelete(e, itemId) {
+    // function handleCartDelete(e, itemId) {
+    //     e.preventDefault();
+    //     const filteredItems = cartData.filter((item) => item.id !== itemId);
+    //     setCartData([...filteredItems]);
+    // }
+
+    function handleCartDelete(e, item) {
         e.preventDefault();
-        const filteredItems = cartData.filter((item) => item.id !== itemId);
-        setCartData([...filteredItems]);
+        dispatch({
+            type: 'REMOVE_FROM_CART',
+            payload: item
+        });
+        toast.success('Movie removed from the cart',  {
+            position: toast.POSITION.BOTTOM_RIGHT,
+        });
     }
     return (
         <>
@@ -28,8 +41,8 @@ export default function CartDetails({ onClose }) {
                             className="space-y-8 lg:space-y-12 max-h-[450px] overflow-auto mb-10 lg:mb-14"
                         >
                             {
-                                cartData.length === 0 ? (<p className='text-center font-bold text-2xl'>Your Cart is empty</p>) : (
-                                    cartData.map((item, index) => {
+                                state.cartData.length === 0 ? (<p className='text-center font-bold text-2xl'>Your Cart is empty</p>) : (
+                                    state.cartData.map((item, index) => {
                                         return (<div key={index} className="grid grid-cols-[1fr_auto] gap-4">
                                             <div className="flex items-center gap-4">
                                                 <img
@@ -50,7 +63,7 @@ export default function CartDetails({ onClose }) {
                                             <div className="flex justify-between gap-4 items-center">
                                                 <button
                                                     className="bg-[#D42967] rounded-md p-2 md:px-4 inline-flex items-center space-x-2 text-white"
-                                                    onClick={(e) => handleCartDelete(e, item.id)}
+                                                    onClick={(e) => handleCartDelete(e, item)}
                                                 >
                                                     <img className="w-5 h-5" src={deleteImg} alt="" />
                                                     <span className="max-md:hidden">Remove</span>
